@@ -16,7 +16,7 @@ class VadModel {
     virtual void LoadConfigFromYaml(const char* filename)=0;
     virtual void FbankKaldi(float sample_rate, std::vector<std::vector<float>> &vad_feats,
                     const std::vector<float> &waves)=0;
-    virtual std::vector<std::vector<float>> &LfrCmvn(std::vector<std::vector<float>> &vad_feats)=0;
+    virtual void LfrCmvn(std::vector<std::vector<float>> &vad_feats)=0;
     virtual void Forward(
             const std::vector<std::vector<float>> &chunk_feats,
             std::vector<std::vector<float>> *out_prob)=0;
