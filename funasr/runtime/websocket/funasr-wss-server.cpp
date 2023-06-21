@@ -5,7 +5,7 @@
 /* 2022-2023 by zhaomingwork */
 
 // io server
-// Usage:funasr-ws-server  [--model_thread_num <int>] [--decoder_thread_num <int>]
+// Usage:funasr-wss-server  [--model_thread_num <int>] [--decoder_thread_num <int>]
 //                    [--io_thread_num <int>] [--port <int>] [--listen_ip
 //                    <string>] [--punc-quant <string>] [--punc-dir <string>]
 //                    [--vad-quant <string>] [--vad-dir <string>] [--quantize
@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
     google::InitGoogleLogging(argv[0]);
     FLAGS_logtostderr = true;
 
-    TCLAP::CmdLine cmd("funasr-ws-server", ' ', "1.0");
+    TCLAP::CmdLine cmd("funasr-wss-server", ' ', "1.0");
     TCLAP::ValueArg<std::string> download_model_dir(
         "", "download-model-dir",
         "Download model from Modelscope to download_model_dir",
@@ -105,6 +105,113 @@ int main(int argc, char* argv[]) {
     // Download model form Modelscope
     try{
         std::string s_download_model_dir = download_model_dir.getValue();
+        // download model from modelscope when the model-dir is model ID or local path
+        // bool is_download = false;
+        // if(download_model_dir.isSet() && !s_download_model_dir.empty()){
+        //     is_download = true;
+        //     if (access(s_download_model_dir.c_str(), F_OK) != 0){
+        //         LOG(ERROR) << s_download_model_dir << " do not exists."; 
+        //         exit(-1);
+        //     }
+        // }else{
+        //     s_download_model_dir="./";
+        // }
+        // std::string s_vad_path = model_path[VAD_DIR];
+        // std::string s_asr_path = model_path[MODEL_DIR];
+        // std::string s_punc_path = model_path[PUNC_DIR];
+        // std::string python_cmd = "python -m funasr.export.export_model --type onnx --quantize True ";
+        // if(vad_dir.isSet() && !s_vad_path.empty()){
+        //     std::string python_cmd_vad = python_cmd + " --model-name " + s_vad_path + " --export-dir " + s_download_model_dir;
+        //     if(is_download){
+        //         LOG(INFO) << "Download model: " <<  s_vad_path << " from modelscope: ";
+        //     }else{
+        //         if (access(s_vad_path.c_str(), F_OK) != 0){
+        //             LOG(ERROR) << s_vad_path << " do not exists."; 
+        //             exit(-1);
+        //         }                
+        //     }
+        //     system(python_cmd_vad.c_str());
+        //     std::string down_vad_path;
+        //     std::string down_vad_model;            
+        //     if(is_download){
+        //         down_vad_path  = s_download_model_dir+"/"+s_vad_path;
+        //         down_vad_model = s_download_model_dir+"/"+s_vad_path+"/model_quant.onnx";
+        //     }else{
+        //         down_vad_path  = s_vad_path;
+        //         down_vad_model = s_vad_path+"/model_quant.onnx";
+        //     }
+        //     if (access(down_vad_model.c_str(), F_OK) != 0){
+        //       LOG(ERROR) << down_vad_model << " do not exists."; 
+        //       exit(-1);
+        //     }else{
+        //       model_path[VAD_DIR]=down_vad_path;
+        //       LOG(INFO) << "Set " << VAD_DIR << " : " << model_path[VAD_DIR];
+        //     }
+        // }else{
+        //   LOG(INFO) << "VAD model is not set, use default.";
+        // }
+
+        // if(model_dir.isSet() && !s_asr_path.empty()){
+        //     std::string python_cmd_asr = python_cmd + " --model-name " + s_asr_path + " --export-dir " + s_download_model_dir;
+        //     if(is_download){
+        //         LOG(INFO) << "Download model: " <<  s_asr_path << " from modelscope: ";
+        //     }else{
+        //         if (access(s_asr_path.c_str(), F_OK) != 0){
+        //             LOG(ERROR) << s_asr_path << " do not exists."; 
+        //             exit(-1);
+        //         }                
+        //     }
+        //     system(python_cmd_asr.c_str());
+        //     std::string down_asr_path;
+        //     std::string down_asr_model;     
+        //     if(is_download){
+        //         down_asr_path  = s_download_model_dir+"/"+s_asr_path;
+        //         down_asr_model = s_download_model_dir+"/"+s_asr_path+"/model_quant.onnx";
+        //     }else{
+        //         down_asr_path  = s_asr_path;
+        //         down_asr_model = s_asr_path+"/model_quant.onnx";
+        //     }
+        //     if (access(down_asr_model.c_str(), F_OK) != 0){
+        //       LOG(ERROR) << down_asr_model << " do not exists."; 
+        //       exit(-1);
+        //     }else{
+        //       model_path[MODEL_DIR]=down_asr_path;
+        //       LOG(INFO) << "Set " << MODEL_DIR << " : " << model_path[MODEL_DIR];
+        //     }
+        // }else{
+        //   LOG(INFO) << "ASR model is not set, use default.";
+        // }
+
+        // if(punc_dir.isSet() && !s_punc_path.empty()){
+        //     std::string python_cmd_punc = python_cmd + " --model-name " + s_punc_path + " --export-dir " + s_download_model_dir;
+        //     if(is_download){
+        //         LOG(INFO) << "Download model: " <<  s_punc_path << " from modelscope: ";
+        //     }else{
+        //         if (access(s_punc_path.c_str(), F_OK) != 0){
+        //             LOG(ERROR) << s_punc_path << " do not exists."; 
+        //             exit(-1);
+        //         }                
+        //     }
+        //     system(python_cmd_punc.c_str());
+        //     std::string down_punc_path;
+        //     std::string down_punc_model;            
+        //     if(is_download){
+        //         down_punc_path  = s_download_model_dir+"/"+s_punc_path;
+        //         down_punc_model = s_download_model_dir+"/"+s_punc_path+"/model_quant.onnx";
+        //     }else{
+        //         down_punc_path  = s_punc_path;
+        //         down_punc_model = s_punc_path+"/model_quant.onnx";
+        //     }
+        //     if (access(down_punc_model.c_str(), F_OK) != 0){
+        //       LOG(ERROR) << down_punc_model << " do not exists."; 
+        //       exit(-1);
+        //     }else{
+        //       model_path[PUNC_DIR]=down_punc_path;
+        //       LOG(INFO) << "Set " << PUNC_DIR << " : " << model_path[PUNC_DIR];
+        //     }
+        // }else{
+        //   LOG(INFO) << "PUNC model is not set, use default.";
+        // }
         if(download_model_dir.isSet() && !s_download_model_dir.empty()){
             if (access(s_download_model_dir.c_str(), F_OK) != 0){
                 LOG(ERROR) << s_download_model_dir << " do not exists."; 
